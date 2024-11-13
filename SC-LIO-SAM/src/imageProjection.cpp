@@ -30,6 +30,18 @@ POINT_CLOUD_REGISTER_POINT_STRUCT(OusterPointXYZIRT,
     (uint8_t, ring, ring) (uint16_t, noise, noise) (uint32_t, range, range)
 )
 
+struct PandarPointXYZIRT {
+    PCL_ADD_POINT4D;
+    float intensity;
+    double timestamp;
+    uint16_t ring;
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+} EIGEN_ALIGN16;
+POINT_CLOUD_REGISTER_POINT_STRUCT(PandarPointXYZIRT,
+    (float, x, x) (float, y, y) (float, z, z) (float, intensity, intensity)
+    (double, timestamp, timestamp) (uint16_t, ring, ring)
+)
+
 struct MulranPointXYZIRT { // from the file player's topic https://github.com/irapkaist/file_player_mulran, see https://github.com/irapkaist/file_player_mulran/blob/17da0cb6ef66b4971ec943ab8d234aa25da33e7e/src/ROSThread.cpp#L7
      PCL_ADD_POINT4D;
      float intensity;
@@ -81,6 +93,7 @@ private:
 
     pcl::PointCloud<PointXYZIRT>::Ptr laserCloudIn;
     pcl::PointCloud<OusterPointXYZIRT>::Ptr tmpOusterCloudIn;
+    pcl::Pointcloud<PandarPointXYZIRT>::Ptr tmpPandarCloudIn;
     pcl::PointCloud<MulranPointXYZIRT>::Ptr tmpMulranCloudIn;
     pcl::PointCloud<PointType>::Ptr   fullCloud;
     pcl::PointCloud<PointType>::Ptr   extractedCloud;
@@ -120,6 +133,7 @@ public:
     {
         laserCloudIn.reset(new pcl::PointCloud<PointXYZIRT>());
         tmpOusterCloudIn.reset(new pcl::PointCloud<OusterPointXYZIRT>());
+        tmpPandarCloudIn.reset(new pcl::PointCloud<PandarPointXYZIRT>());
         tmpMulranCloudIn.reset(new pcl::PointCloud<MulranPointXYZIRT>());
         fullCloud.reset(new pcl::PointCloud<PointType>());
         extractedCloud.reset(new pcl::PointCloud<PointType>());
@@ -240,6 +254,24 @@ public:
                 dst.intensity = src.intensity;
                 dst.ring = src.ring;
                 dst.time = src.t * 1e-9f;
+            }
+        }
+        else if (sensor == SensorType::HESAI)
+        {
+            pcl::moveFromROSMsg(currentCloudMsg, *tmpPandarCloudIn);
+            laserCloudIn->points.resize(tmpPandarCloudIn->size());
+            laserCloudIn->is_dense = tmpPandarCloudIn->is_dense;
+            double time_begin = tmpPandarCloudIn->points[0].timestamp;
+            for (size_t i = 0; i < tmpPandarCloudIn->size(); i++)
+            {
+                auto &src = tmpPandarCloudIn->points[i];
+                auto &dst = laserCloudIn->points[i];
+                dst.x = src.x;
+                dst.y = src.y;
+                dst.z = src.z;
+                dst.intensity = src.intensity;
+                dst.ring = src.ring;
+                dst.time = src.timestamp - time_begin;
             }
         }
         else if (sensor == SensorType::MULRAN)
