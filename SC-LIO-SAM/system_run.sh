@@ -4,7 +4,6 @@ set -euo pipefail
 source devel/setup.bash
 
 BAG="/workspace/Dataset/303_2/dataset.bag"
-EST="/workspace/Dataset/output/estimate.txt"
 GT="/workspace/Dataset/303_2/groundtruth.txt"
 
 # 1) lio_sam launch (독립 프로세스 그룹으로 실행)
@@ -48,6 +47,6 @@ graceful_kill_group "$LIO_PGID" "lio_sam" 10
 echo "[INFO] lio_sam terminated."
 
 # 3) evo_ape 실행 → RMSE만 출력
-RESULT=$(evo_ape tum "$EST" "$GT" -va | awk '/^[[:space:]]*rmse[[:space:]]/ {print $2; exit}')
+RESULT=$(evo_ape tum /workspace/Dataset/output/estimate.txt "$GT" -va | awk '/^[[:space:]]*rmse[[:space:]]/ {print $2; exit}')
 echo "The trajectory absolute translation error is $RESULT meter"
 
