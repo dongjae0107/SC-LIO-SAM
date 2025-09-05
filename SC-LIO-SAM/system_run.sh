@@ -3,8 +3,17 @@ set -euo pipefail
 
 source ../../../devel/setup.bash
 
-BAG="/workspace/Dataset/303_2/dataset.bag"
-GT="/workspace/Dataset/303_2/groundtruth.txt"
+
+# ===== Input argument =====
+if [ $# -lt 1 ]; then
+  echo "Usage: $0 <dataset_name>"
+  echo "Example: $0 303_2"
+  exit 1
+fi
+
+DATASET=$1
+BAG="/workspace/Dataset/${DATASET}/dataset.bag"
+GT="/workspace/Dataset/${DATASET}/groundtruth.txt"
 
 # 1) lio_sam launch (독립 프로세스 그룹으로 실행)
 setsid roslaunch lio_sam run_steam.launch > lio_sam.log 2>&1 &
