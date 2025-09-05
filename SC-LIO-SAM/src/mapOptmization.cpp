@@ -479,7 +479,7 @@ public:
     void saveTrajectoryTxt(const pcl::PointCloud<PointTypePose>::Ptr& cloudKeyPoses6D,
                         const std::string& saveDirectory) 
     {
-        std::string filePath = saveDirectory + "trajectory.txt";
+        std::string filePath = saveDirectory + "estimate.txt";
         std::ofstream ofs(filePath);
 
         ofs << std::fixed << std::setprecision(6);
@@ -655,7 +655,7 @@ public:
             if (detectLoopClosureDistance(&loopKeyCur, &loopKeyPre) == false)
                 return;
 
-        std::cout << "RS loop found! between " << loopKeyCur << " and " << loopKeyPre << "." << std::endl; // giseop
+        // std::cout << "RS loop found! between " << loopKeyCur << " and " << loopKeyPre << "." << std::endl; // giseop
 
         // extract cloud
         pcl::PointCloud<PointType>::Ptr cureKeyframeCloud(new pcl::PointCloud<PointType>());
@@ -684,10 +684,10 @@ public:
         icp.align(*unused_result);
 
         if (icp.hasConverged() == false || icp.getFitnessScore() > historyKeyframeFitnessScore) {
-            std::cout << "ICP fitness test failed (" << icp.getFitnessScore() << " > " << historyKeyframeFitnessScore << "). Reject this RS loop." << std::endl;
+            // std::cout << "ICP fitness test failed (" << icp.getFitnessScore() << " > " << historyKeyframeFitnessScore << "). Reject this RS loop." << std::endl;
             return;
         } else {
-            std::cout << "ICP fitness test passed (" << icp.getFitnessScore() << " < " << historyKeyframeFitnessScore << "). Add this RS loop." << std::endl;
+            // std::cout << "ICP fitness test passed (" << icp.getFitnessScore() << " < " << historyKeyframeFitnessScore << "). Add this RS loop." << std::endl;
         }
 
         // publish corrected cloud
@@ -740,7 +740,7 @@ public:
         if( loopKeyPre == -1 /* No loop found */)
             return;
 
-        std::cout << "SC loop found! between " << loopKeyCur << " and " << loopKeyPre << "." << std::endl; // giseop
+        // std::cout << "SC loop found! between " << loopKeyCur << " and " << loopKeyPre << "." << std::endl; // giseop
 
         // extract cloud
         pcl::PointCloud<PointType>::Ptr cureKeyframeCloud(new pcl::PointCloud<PointType>());
@@ -776,10 +776,10 @@ public:
         // TODO icp align with initial 
 
         if (icp.hasConverged() == false || icp.getFitnessScore() > historyKeyframeFitnessScore) {
-            std::cout << "ICP fitness test failed (" << icp.getFitnessScore() << " > " << historyKeyframeFitnessScore << "). Reject this SC loop." << std::endl;
+            // std::cout << "ICP fitness test failed (" << icp.getFitnessScore() << " > " << historyKeyframeFitnessScore << "). Reject this SC loop." << std::endl;
             return;
         } else {
-            std::cout << "ICP fitness test passed (" << icp.getFitnessScore() << " < " << historyKeyframeFitnessScore << "). Add this SC loop." << std::endl;
+            // std::cout << "ICP fitness test passed (" << icp.getFitnessScore() << " < " << historyKeyframeFitnessScore << "). Add this SC loop." << std::endl;
         }
 
         // publish corrected cloud

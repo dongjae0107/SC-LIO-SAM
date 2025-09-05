@@ -302,11 +302,11 @@ public:
         timeScanEnd = timeScanCur + laserCloudIn->points.back().time;
 
         // check dense flag
-        if (laserCloudIn->is_dense == false)
-        {
-            ROS_ERROR("Point cloud is not in dense format, please remove NaN points first!");
-            ros::shutdown();
-        }
+        // if (laserCloudIn->is_dense == false)
+        // {
+        //     ROS_ERROR("Point cloud is not in dense format, please remove NaN points first!");
+        //     ros::shutdown();
+        // }
 
         // check ring channel
         static int ringFlag = 0;
