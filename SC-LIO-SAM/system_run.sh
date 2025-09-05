@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-source ../../devel/setup.bash
+source ../../../devel/setup.bash
 
 BAG="/workspace/Dataset/303_2/dataset.bag"
 GT="/workspace/Dataset/303_2/groundtruth.txt"
